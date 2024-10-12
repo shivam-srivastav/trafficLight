@@ -79,7 +79,7 @@ export default function Home() {
       <h2 className="h2 text-lg">Traffic Light System</h2>
 
       <Main>
-        <AdocTime $color={toggle.color}>
+        <AdocTime icolor={toggle.color}>
           <h1>Adoc Time : {adocTime.value} Second</h1>
           <form onSubmit={(e) => handleAdocTime(e)}>
             <input type="text" name="adoc" placeholder="Enter the Seconds to Adoc" />
@@ -99,17 +99,17 @@ export default function Home() {
           </div>
         </AdocTime>
         <TrafficBox>
-          <List $color={RED} $active={toggle.color === RED}>
+          <List icolor={RED} iactive={toggle.color === RED}>
             <span>
               {toggle.color === RED && toggle.counter + 1}
             </span>
           </List>
-          <List $color={YELLOW} $active={toggle.color === YELLOW} >
+          <List icolor={YELLOW} iactive={toggle.color === YELLOW} >
             <span>
               {toggle.color === YELLOW && toggle.counter + 1}
             </span>
           </List>
-          <List $color={GREEN} $active={toggle.color === GREEN}>
+          <List icolor={GREEN} iactive={toggle.color === GREEN}>
             <span>
               {toggle.color === GREEN && toggle.counter + 1}
             </span>
@@ -143,14 +143,14 @@ list-style:none;
 }
 
 `
-const List = styled.li`
+const List = styled.li<{ icolor: string, iactive: boolean }>`
 margin:1rem;
-border:${props => `1px solid ${props.$color}`};
-background: ${props => props.$color};
+border:${props => `1px solid ${props.icolor}`};
+background: ${props => props.icolor};
 width:5rem;
 height:5rem;
 border-radius:1000%;
-box-shadow:${props => props.$active ? " 0 0 10px 10px #fff" : ' 0 0 10px -10px #fff'};
+box-shadow:${props => props.iactive ? " 0 0 10px 10px #fff" : ' 0 0 10px -10px #fff'};
 display:flex;
 justify-content:center;
 align-items:center;
@@ -174,7 +174,7 @@ margin:3rem;`
 const Main = styled.div`
 text-align:center;
 `
-const AdocTime = styled.div`
+const AdocTime = styled.div<{ icolor: string }>`
   div{
   margin:1rem;
     button {
@@ -189,7 +189,7 @@ const AdocTime = styled.div`
     margin:4px;
     padding:4px;
     color:#000;
-    background: ${props => props.$color}
+    background: ${props => props.icolor}
     }
 
 `

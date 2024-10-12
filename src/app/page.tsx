@@ -1,101 +1,204 @@
+"use client"
 import Image from "next/image";
-
+import { useEffect, useState } from "react";
+import styled from "styled-components";
+const RED = '#C62E2E';
+const GREEN = "#06D001";
+const YELLOW = "#F4CE14";
 export default function Home() {
+  const [defaultTime, setDefaultTime] = useState({
+    red: 15,
+    green: 10,
+    yellow: 5
+  });
+  const [adocTime, setAdocTime] = useState({
+    value: 0,
+  })
+  const [toggle, setToggle] = useState({
+    counter: 0,
+    color: RED
+  })
+  useEffect(() => {
+    if (toggle.counter)
+      automateColor(toggle.counter, toggle.color)
+  }, [toggle.counter])
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setToggle((prev) => ({
+        ...prev,
+        counter: prev.counter + 1,
+      }));
+    }, 1000);
+
+    return () => clearInterval(intervalId);  // Cleanup interval on unmount
+  }, []);
+  const automateColor = (counter: any, color: any) => {
+    switch (color) {
+      case RED:
+        if ((counter) % ADD(defaultTime.red, adocTime.value) === 0) {
+          handleLightChange(YELLOW);
+          setAdocTime({ value: 0 });
+        }
+        break;
+      case YELLOW:
+        if ((counter) % ADD(defaultTime.yellow, adocTime.value) === 0) {
+          handleLightChange(GREEN);
+          setAdocTime({ value: 0 });
+        }
+        break;
+      case GREEN:
+        if ((counter) % ADD(defaultTime.green, adocTime.value) === 0) {
+          handleLightChange(RED);
+          setAdocTime({ value: 0 });
+        }
+        break;
+      default:
+        setToggle({
+          counter: 0,
+          color: RED
+        })
+    }9
+
+  }
+  const handleLightChange = (color: any) => {
+    setToggle({
+      color: color,
+      counter: 0
+    })
+  }
+  const handleAdocTime = (e: any) => {
+    e.preventDefault()
+    setAdocTime((prev) => ({
+      ...prev,
+      value: e.target['adoc'].value
+    }));
+  }
+  const ADD = (num1: any, num2: any) => (Number(num1) + Number(num2))
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+      <h2 className="h2 text-lg">Traffic Light System</h2>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
+      <Main>
+        <AdocTime $color={toggle.color}>
+          <h1>Adoc Time : {adocTime.value} Second</h1>
+          <form onSubmit={(e) => handleAdocTime(e)}>
+            <input type="text" name="adoc" placeholder="Enter the Seconds to Adoc" />
+            <button>Submit</button>
+          </form>
+          <div>
+            <button onClick={() => {
+              console.log("5 sec")
+              setAdocTime({ value: 5 }
+
+              )
+            }}>Add 5 Sec</button>
+            <button onClick={() => {
+              console.log("10 sec")
+              setAdocTime({ value: 10 })
+            }} >Add 10 Sec</button>
+          </div>
+        </AdocTime>
+        <TrafficBox>
+          <List $color={RED} $active={toggle.color === RED}>
+            <span>
+              {toggle.color === RED && toggle.counter + 1}
+            </span>
+          </List>
+          <List $color={YELLOW} $active={toggle.color === YELLOW} >
+            <span>
+              {toggle.color === YELLOW && toggle.counter + 1}
+            </span>
+          </List>
+          <List $color={GREEN} $active={toggle.color === GREEN}>
+            <span>
+              {toggle.color === GREEN && toggle.counter + 1}
+            </span>
+          </List>
+
+
+        </TrafficBox>
+        <Controller>
+          <Button onClick={() => handleLightChange(RED)}>Red</Button>
+          <Button onClick={() => handleLightChange(GREEN)}>Green</Button>
+          <Button onClick={() => handleLightChange(YELLOW)}>Yellow</Button>
+        </Controller>
+      </Main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+        <hr></hr>
+        <ContactMe>
+          <li><a href="https://www.linkedin.com/in/shivam1534/">LinkedIn</a> </li> |
+          <li><a href="https://github.com/shivam-srivastav/">GitHub</a> </li> |
+          <li><a href="mailto:shivam.mkp@gmail.com">Gmail (shivam.mkp@gmail.com)</a> </li> |
+          <li><a href="https://www.instagram.com/shiiivaam._/">Instagram</a> </li>
+        </ContactMe>
       </footer>
     </div>
   );
 }
+const TrafficBox = styled.div`
+display:flex;
+justify-content:center;
+li{
+list-style:none;
+}
+
+`
+const List = styled.li`
+margin:1rem;
+border:${props => `1px solid ${props.$color}`};
+background: ${props => props.$color};
+width:5rem;
+height:5rem;
+border-radius:1000%;
+box-shadow:${props => props.$active ? " 0 0 10px 10px #fff" : ' 0 0 10px -10px #fff'};
+display:flex;
+justify-content:center;
+align-items:center;
+span {
+color:#001;
+font-weight:600;
+font-size:20px;
+}
+`
+const Button = styled.button`
+padding:0.5rem;
+margin:1rem;
+border-radius:4px;
+border:1px solid;
+ &:hover{
+ background:blue;
+ }`
+const Controller = styled.div`
+padding:4px;
+margin:3rem;`
+const Main = styled.div`
+text-align:center;
+`
+const AdocTime = styled.div`
+  div{
+  margin:1rem;
+    button {
+    border:1px solid;
+    }
+  }
+    input{
+    color:#000;
+    padding:4px;}
+  button {
+    border:1px solid;
+    margin:4px;
+    padding:4px;
+    color:#000;
+    background: ${props => props.$color}
+    }
+
+`
+const ContactMe = styled.div`
+
+list-style:none;
+display:flex;
+justify-content:space-between;
+li{
+padding:0 4px;
+margin:0 1rem;
+}`

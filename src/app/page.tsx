@@ -79,6 +79,14 @@ export default function Home() {
       <h2 className="h2 text-lg">Traffic Light System</h2>
 
       <Main>
+        <div>
+          Base Time
+          <p>Red : {defaultTime.red} Sec</p>
+          <p>Green : {defaultTime.green} Sec</p>
+          <p>Yellow: {defaultTime.yellow} Sec</p>
+          <br />
+
+        </div>
         <AdocTime icolor={toggle.color}>
           <h1>Adoc Time : {adocTime.value} Second</h1>
           <form onSubmit={(e) => handleAdocTime(e)}>
